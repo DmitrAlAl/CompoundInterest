@@ -39,13 +39,13 @@ public class MainActivity extends Activity {
 			result.setText(String.format("Коэфф. роста: %.2f", y));
 			
 			int num = periodVal;
-	        GraphViewData[] simpleData = new GraphViewData[num];
-	        GraphViewData[] compoundData = new GraphViewData[num];
+	        GraphViewData[] simpleData = new GraphViewData[num+1];
+	        GraphViewData[] compoundData = new GraphViewData[num+1];
 	        
-	        for (int i = 1; i<=periodVal; i++)
+	        for (int i = 0; i<=periodVal; i++)
 			{
-	        	simpleData[i-1] = new GraphViewData(i, 1+annualVal/100*i);
-	        	compoundData[i-1] = new GraphViewData(i, getCompoundAmount(annualVal, i));
+	        	simpleData[i] = new GraphViewData(i, 1+annualVal/100*i);
+	        	compoundData[i] = new GraphViewData(i, getCompoundAmount(annualVal, i));
 			}
 			
 	        graphView.removeAllSeries();
