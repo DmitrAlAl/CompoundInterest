@@ -12,6 +12,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -29,16 +30,34 @@ public class MainActivity extends Activity {
 	private EditText period;
 	private Integer periodVal=5;
 	private TextView result;
+	private GraphView graphView;
 
 	private void updateResult() {
 		if (annualVal != null && periodVal != null) {
 			
 			Double y = getCompoundAmount(annualVal, periodVal);
 			result.setText(String.format("Коэфф. роста: %.2f", y));
+			
+			int num = periodVal;
+	        GraphViewData[] simpleData = new GraphViewData[num];
+	        GraphViewData[] compoundData = new GraphViewData[num];
+	        
+	        for (int i = 1; i<=periodVal; i++)
+			{
+	        	simpleData[i-1] = new GraphViewData(i, 1+annualVal/100*i);
+	        	compoundData[i-1] = new GraphViewData(i, getCompoundAmount(annualVal, i));
+			}
+			
+	        graphView.removeAllSeries();
+	        graphView.addSeries(new GraphViewSeries(simpleData));
+	        graphView.addSeries(new GraphViewSeries(compoundData));
+	        graphView.setVisibility(View.VISIBLE);
 		}
 		else
 		{
 			result.setText("");
+			graphView.removeAllSeries();
+			graphView.setVisibility(View.INVISIBLE);
 		}
 	}
 
@@ -118,65 +137,13 @@ public class MainActivity extends Activity {
 		});
 		
 		// graph with dynamically genereated horizontal and vertical labels
-		GraphView graphView = new LineGraphView(
-				MainActivity.this // context
-//		  , new GraphViewData[] {
-//		    new GraphViewData(1, 2.0d)
-//		    , new GraphViewData(2, 1.5d)
-//		    , new GraphViewData(2.5, 3.0d) // another frequency
-//		    , new GraphViewData(3, 2.5d)
-//		    , new GraphViewData(4, 1.0d)
-//		    , new GraphViewData(5, 3.0d)
-//		  } // data
-		  , "GraphViewDemo" // heading
-//		  , null // dynamic labels
-//		  , null // dynamic labels
+		graphView = new LineGraphView(
+				MainActivity.this, "GraphViewDemo" // heading
 		);
-		
-		
-		int num = periodVal;
-        GraphViewData[] simpleData = new GraphViewData[num];
-        GraphViewData[] compoundData = new GraphViewData[num];
-        
-        for (int i = 1; i<=periodVal; i++)
-		{
-        	simpleData[i-1] = new GraphViewData(i, 1+annualVal/100*i);
-        	compoundData[i-1] = new GraphViewData(i, getCompoundAmount(annualVal, i));
-			
-//			addGraphView();
-		}
-		
-		
-//		GraphViewSeries simpleSeries = new GraphViewSeries("Простые проценты", style, values);
-//		GraphViewSeries compoundSeries;
-		
-//		for (int i = 0; i<periodVal; i++)
-//		{
-//			simpleSeries.appendData(new GraphViewData(i, 2.0d), false, 500);
-//			
-////			addGraphView();
-//		}
-//		GraphViewSeries exampleSeries = new GraphViewSeries(new GraphViewData[] {
-//                new GraphViewData(1, 2.0d)
-//                , new GraphViewData(2, 1.5d)
-//                , new GraphViewData(2.5, 3.0d) // another frequency
-//                , new GraphViewData(3, 2.5d)
-//                , new GraphViewData(4, 1.0d)
-//                , new GraphViewData(5, 3.0d)
-//        });
-//		GraphViewSeries exampleSeries2 = new GraphViewSeries(new GraphViewData[] {
-//				new GraphViewData(1, 1.0d)
-//				, new GraphViewData(2, 1.5d)
-//				, new GraphViewData(2.5, 1.0d) // another frequency
-//				, new GraphViewData(3, 1.5d)
-//				, new GraphViewData(4, 1.0d)
-//				, new GraphViewData(5, 1.0d)
-//		});
-		
-        graphView.addSeries(new GraphViewSeries(simpleData));
-        graphView.addSeries(new GraphViewSeries(compoundData));
-        
+	
 		LinearLayout layout = (LinearLayout) findViewById(R.id.rootLinear);
 		layout.addView(graphView);
+		
+		updateResult();
 	}
 }
