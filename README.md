@@ -1,6 +1,16 @@
 CompoundInterest
 ======================
 
+
+A quick project overview.
+=====
+
+
+
+Environments.
+=====
+
+
 CompoundInterest for Android
 GitHub Flavored Markdown
 
