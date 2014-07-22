@@ -4,13 +4,16 @@ package ru.fotki3D;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.jjoe64.graphview.CustomLabelFormatter;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.GraphView.GraphViewData;
+import com.jjoe64.graphview.GraphView.LegendAlign;
 import com.jjoe64.graphview.GraphViewSeries;
 import com.jjoe64.graphview.GraphViewStyle;
 import com.jjoe64.graphview.LineGraphView;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -48,19 +51,50 @@ public class MainActivity extends Activity {
 	        GraphViewData[] compoundData = new GraphViewData[num+1];
 	        
 	        List<String> horizontalLabels = new ArrayList<String>();
+	        List<String> verticalLabels = new ArrayList<String>();
 	        for (int i = 0; i<=periodVal; i++)
 			{
 	        	simpleData[i] = new GraphViewData(i, 1+annualVal/100*i);
-	        	compoundData[i] = new GraphViewData(i, getCompoundAmount(annualVal, i));
 	        	
+	        	double compoundAmount = getCompoundAmount(annualVal, i);
+				compoundData[i] = new GraphViewData(i, compoundAmount);
+	        	
+	        	verticalLabels.add(String.format("%.2f", compoundAmount));
 	        	horizontalLabels.add(String.valueOf(i));
 			}
 			
 	        graphView.removeAllSeries();
-	        graphView.addSeries(new GraphViewSeries(simpleData));
-	        graphView.addSeries(new GraphViewSeries(compoundData));
+	        GraphViewSeries s1, s2;
+			graphView.addSeries(s1 = new GraphViewSeries("Простой", null,simpleData));
+	        graphView.addSeries(s2=new GraphViewSeries("Сложный", null,compoundData));
+	        s2.getStyle().color = Color.GREEN;
 	        
-	        graphView.setHorizontalLabels( horizontalLabels.toArray(new String[horizontalLabels.size()]));
+	        if (periodVal<10)
+	        {
+	        	graphView.setLegendAlign(LegendAlign.BOTTOM);
+	        }
+	        else
+	        {
+	    		graphView.setLegendAlign(LegendAlign.MIDDLE);
+	        }
+	        
+//	        12 лет в мой экран помещаются. 
+//	        иначе - оставлять только 6 цифр.
+	        
+	        List<String>horizontalWithoutExtra = new ArrayList<String>();
+	        if (periodVal < 12)
+	        {
+	        	horizontalWithoutExtra = horizontalLabels;
+	        	graphView.setHorizontalLabels( horizontalWithoutExtra.toArray(new String[horizontalWithoutExtra.size()]));
+	        }
+	        else
+	        {
+//	        	horizontalWithoutExtra = horizontalLabels.subList(0, 5);
+	        	graphView.setHorizontalLabels( null);
+	        }
+	        
+//	        
+//	        graphView.setVerticalLabels(verticalLabels.toArray(new String[verticalLabels.size()]));
 	        graphView.setVisibility(View.VISIBLE);
 		}
 		else
@@ -154,7 +188,22 @@ public class MainActivity extends Activity {
 		);
 		
 		graphView.setTitle("График доходности для простого и сложного процента в зависимости от времени");
+		
 		graphView.setShowLegend(true);
+		
+		graphView.setCustomLabelFormatter(new CustomLabelFormatter() {
+			  @Override
+			  public String formatLabel(double value, boolean isValueX) {
+			    if (!isValueX) 
+			    {
+			        return String.format("%.2f", value);
+			    }
+			    return null; // let graphview generate Y-axis label for us
+			  }
+			});
+		
+		
+		
 		GraphViewStyle sdf = graphView.getGraphViewStyle();
 		sdf.setTextSize(littleText.getTextSize()-2);
 	
