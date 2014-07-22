@@ -4,6 +4,7 @@ package ru.fotki3D;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.GraphView.GraphViewData;
 import com.jjoe64.graphview.GraphViewSeries;
+import com.jjoe64.graphview.GraphViewStyle;
 import com.jjoe64.graphview.LineGraphView;
 
 import android.app.Activity;
@@ -30,6 +31,7 @@ public class MainActivity extends Activity {
 	private EditText period;
 	private Integer periodVal=5;
 	private TextView result;
+	private TextView littleText;
 	private GraphView graphView;
 
 	private void updateResult() {
@@ -73,6 +75,8 @@ public class MainActivity extends Activity {
 		annual = (EditText) findViewById(R.id.editText1);
 		period = (EditText) findViewById(R.id.editText2);
 		result = (TextView) findViewById(R.id.textView3);
+		littleText = (TextView) findViewById(R.id.textView2);
+		
 
 		result.setText("");
 
@@ -140,6 +144,11 @@ public class MainActivity extends Activity {
 		graphView = new LineGraphView(
 				MainActivity.this, "GraphViewDemo" // heading
 		);
+		
+		graphView.setTitle("График доходности для простого и сложного процента в зависимости от времени");
+		graphView.setShowLegend(true);
+		GraphViewStyle sdf = graphView.getGraphViewStyle();
+		sdf.setTextSize(littleText.getTextSize()-2);
 	
 		LinearLayout layout = (LinearLayout) findViewById(R.id.rootLinear);
 		layout.addView(graphView);
