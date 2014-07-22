@@ -1,6 +1,9 @@
 package ru.fotki3D;
 
 //import ru.fotki3D.compoundinterest.R;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.GraphView.GraphViewData;
 import com.jjoe64.graphview.GraphViewSeries;
@@ -44,15 +47,20 @@ public class MainActivity extends Activity {
 	        GraphViewData[] simpleData = new GraphViewData[num+1];
 	        GraphViewData[] compoundData = new GraphViewData[num+1];
 	        
+	        List<String> horizontalLabels = new ArrayList<String>();
 	        for (int i = 0; i<=periodVal; i++)
 			{
 	        	simpleData[i] = new GraphViewData(i, 1+annualVal/100*i);
 	        	compoundData[i] = new GraphViewData(i, getCompoundAmount(annualVal, i));
+	        	
+	        	horizontalLabels.add(String.valueOf(i));
 			}
 			
 	        graphView.removeAllSeries();
 	        graphView.addSeries(new GraphViewSeries(simpleData));
 	        graphView.addSeries(new GraphViewSeries(compoundData));
+	        
+	        graphView.setHorizontalLabels( horizontalLabels.toArray(new String[horizontalLabels.size()]));
 	        graphView.setVisibility(View.VISIBLE);
 		}
 		else
